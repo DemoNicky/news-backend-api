@@ -11,14 +11,13 @@ import com.dobudobu.newsapiapp.Service.AuthenticationService;
 import com.dobudobu.newsapiapp.Service.JWTService;
 import com.dobudobu.newsapiapp.Util.UUIDGeneratorUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +31,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final JWTService jwtService;
 
+    @Autowired
     private UUIDGeneratorUtil uuidGeneratorUtil;
 
     public User signUp(SignUpRequest signUpRequest){

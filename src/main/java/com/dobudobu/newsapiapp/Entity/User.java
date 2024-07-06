@@ -36,9 +36,16 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
     private Role role;
 
     private Boolean active;
+
+    @OneToMany(mappedBy = "user")
+    private List<Articles> articles;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
