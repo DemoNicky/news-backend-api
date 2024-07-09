@@ -46,7 +46,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Articles> articles;
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

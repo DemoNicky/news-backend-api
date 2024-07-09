@@ -1,9 +1,9 @@
 package com.dobudobu.newsapiapp.Controller;
 
-import com.dobudobu.newsapiapp.Dto.RefreshTokenRequest;
+import com.dobudobu.newsapiapp.Dto.Request.RefreshTokenRequest;
 import com.dobudobu.newsapiapp.Dto.Response.JwtAuthenticationResponse;
-import com.dobudobu.newsapiapp.Dto.SignInRequest;
-import com.dobudobu.newsapiapp.Dto.SignUpRequest;
+import com.dobudobu.newsapiapp.Dto.Request.SignInRequest;
+import com.dobudobu.newsapiapp.Dto.Request.SignUpRequest;
 import com.dobudobu.newsapiapp.Entity.User;
 import com.dobudobu.newsapiapp.Service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;

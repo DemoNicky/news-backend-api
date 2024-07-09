@@ -1,4 +1,4 @@
-package com.dobudobu.newsapiapp.Config;
+package com.dobudobu.newsapiapp.Config.SecurityConfig;
 
 import com.dobudobu.newsapiapp.Service.JWTService;
 import com.dobudobu.newsapiapp.Service.UserService;

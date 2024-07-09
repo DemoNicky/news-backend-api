@@ -1,4 +1,4 @@
-package com.dobudobu.newsapiapp.Dto;
+package com.dobudobu.newsapiapp.Dto.Request;
 
 import lombok.Getter;
 import lombok.Setter;

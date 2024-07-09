@@ -1,4 +1,4 @@
-package com.dobudobu.newsapiapp.Dto;
+package com.dobudobu.newsapiapp.Dto.Request;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;

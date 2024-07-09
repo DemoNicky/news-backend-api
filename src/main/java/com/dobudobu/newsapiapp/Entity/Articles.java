@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -15,6 +16,9 @@ public class Articles {
     @GeneratedValue(generator = "uuid")
     private String id;
 
+    @Column(name = "articles_code", length = 10, unique = true)
+    private String articlesCode;
+
     @Column(name = "articles_title", length = 40, unique = true)
     private String articlesTitle;
 
@@ -23,23 +27,28 @@ public class Articles {
 
     //ini untuk jumlah viewers
     @Column(name = "readership")
-    private Long readership;
+    private Integer readership;
 
-    @Column(name = "like")
-    private Integer like;
+    @Column(name = "likes")
+    private Integer likes;
 
     @Column(name = "author")
     private String author;
 
-    @Column(name = "content", length = 5000, unique = true)
+    @Column(name = "content", length = 40000, unique = true)
     private String content;
 
     @ManyToOne
     @JoinColumn(name = "category", referencedColumnName = "id")
     private Category category;
 
+    @OneToMany
+    private List<Comment> comments;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @OneToMany
+    private List<Image> images;
 }

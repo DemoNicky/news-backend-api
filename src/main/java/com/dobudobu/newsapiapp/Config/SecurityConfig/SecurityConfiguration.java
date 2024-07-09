@@ -1,4 +1,4 @@
-package com.dobudobu.newsapiapp.Config;
+package com.dobudobu.newsapiapp.Config.SecurityConfig;
 
 import com.dobudobu.newsapiapp.Entity.Enum.Role;
 import com.dobudobu.newsapiapp.Service.UserService;
@@ -33,7 +33,10 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(request -> request.requestMatchers("/api/v1/auth/**")
                         .permitAll()
                         .requestMatchers("/api/v1/admin").hasAnyAuthority(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/category/create-category").hasAnyAuthority(Role.ADMIN.name())
+
                         .requestMatchers("/api/v1/user").hasAnyAuthority(Role.USER.name())
+
                         .anyRequest().authenticated())
 
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

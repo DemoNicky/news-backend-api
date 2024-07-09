@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
-public class NewsApiAppApplication implements CommandLineRunner {
+@EnableAsync
+public class NewsApiAppApplication{
 
 	@Autowired
 	private UserRepository userRepository;
@@ -19,20 +21,20 @@ public class NewsApiAppApplication implements CommandLineRunner {
 		SpringApplication.run(NewsApiAppApplication.class, args);
 	}
 
-	public void run(String... args){
-		User adminAccount = userRepository.findByRole(Role.ADMIN);
-
-		if (null == adminAccount){
-			User user = new User();
-			user.setEmail("admin@gmail.com");
-			user.setFullname("admin");
-			user.setPhoneNumber("08123123123");
-			user.setUserCode("111111111");
-			user.setRole(Role.ADMIN);
-			user.setPassword(new BCryptPasswordEncoder().encode("admin"));
-			userRepository.save(user);
-		}
-
-	}
+//	public void run(String... args){
+//		User adminAccount = userRepository.findByRole(Role.ADMIN);
+//
+//		if (null == adminAccount){
+//			User user = new User();
+//			user.setEmail("admin@gmail.com");
+//			user.setFullname("admin");
+//			user.setPhoneNumber("08123123123");
+//			user.setUserCode("111111111");
+//			user.setRole(Role.ADMIN);
+//			user.setPassword(new BCryptPasswordEncoder().encode("admin"));
+//			userRepository.save(user);
+//		}
+//
+//	}
 
 }
