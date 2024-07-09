@@ -6,24 +6,23 @@ import com.dobudobu.newsapiapp.Dto.Response.CreateArticleResponse;
 import com.dobudobu.newsapiapp.Dto.Response.ResponseHandling;
 import com.dobudobu.newsapiapp.Entity.Articles;
 import com.dobudobu.newsapiapp.Entity.Category;
+import com.dobudobu.newsapiapp.Entity.Image;
 import com.dobudobu.newsapiapp.Entity.User;
 import com.dobudobu.newsapiapp.Repository.ArticlesRepository;
 import com.dobudobu.newsapiapp.Repository.CategoryRepository;
+import com.dobudobu.newsapiapp.Repository.ImageRepository;
 import com.dobudobu.newsapiapp.Repository.UserRepository;
 import com.dobudobu.newsapiapp.Service.ArticleService;
 import com.dobudobu.newsapiapp.Util.AuthenticationEmailUtil;
 import com.dobudobu.newsapiapp.Util.UUIDGeneratorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,14 +41,16 @@ public class ArticleServiceImpl implements ArticleService {
     private AuthenticationEmailUtil authenticationEmailUtil;
 
     @Autowired
+    private ImageRepository imageRepository;
+
+    @Autowired
     private UUIDGeneratorUtil uuidGeneratorUtil;
 
     private final Cloudinary cloudinary;
 
     @Override
-    @Async
     @Transactional
-    public ResponseHandling<CreateArticleResponse> createArticle(MultipartFile image, String articlesTitle, String content, String categoryId) throws IOException {
+    public ResponseHandling<CreateArticleResponse> createArticle(MultipartFile image, String articlesTitle, String content, Long categoryId) throws IOException {
         ResponseHandling<CreateArticleResponse> responseHandling = new ResponseHandling<>();
         Optional<User> user = userRepository.findByEmail(authenticationEmailUtil.getEmailAuthentication());
         Optional<Category> category = categoryRepository.findById(categoryId);
@@ -66,6 +67,12 @@ public class ArticleServiceImpl implements ArticleService {
         }
         Map<?, ?> result = cloudinary.uploader().upload(image.getBytes(), ObjectUtils.emptyMap());
         String imageUrl = result.get("url").toString();
+
+        Image imageSave = new Image();
+        imageSave.setUrlImage(imageUrl);
+
+        imageRepository.save(imageSave);
+
         Articles articles = new Articles();
         articles.setArticlesCode(getUniqueUUID());
         articles.setArticlesTitle(articlesTitle);
@@ -76,6 +83,10 @@ public class ArticleServiceImpl implements ArticleService {
         articles.setContent(content);
         articles.setCategory(category.get());
         articles.setUser(user.get());
+        articles.setImages(imageSave);
+
+        articlesRepository.save(articles);
+
         CreateArticleResponse createArticleResponse = CreateArticleResponse.builder()
                 .articlesCode(articles.getArticlesCode())
                 .articlesTitle(articles.getArticlesTitle())
@@ -84,6 +95,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .readership(articles.getReadership())
                 .likes(articles.getLikes())
                 .author(articles.getAuthor())
+                .image(articles.getImages().getUrlImage())
                 .content(articles.getContent())
                 .category(articles.getCategory())
                 .build();
@@ -91,7 +103,7 @@ public class ArticleServiceImpl implements ArticleService {
         responseHandling.setData(createArticleResponse);
         responseHandling.setMessage("success upload article");
         responseHandling.setErrors(false);
-        return null;
+        return responseHandling;
     }
 
     private String getUniqueUUID(){
@@ -102,6 +114,7 @@ public class ArticleServiceImpl implements ArticleService {
             Optional<Articles> articles = articlesRepository.findByArticlesCode(uuid);
             if (!articles.isPresent()){
                 ress = uuid;
+                loop = false;
             }
         }
         return ress;

@@ -12,9 +12,8 @@ import java.util.List;
 public class Category {
 
     @Id
-    @GenericGenerator(strategy = "uuid2", name = "uuid")
-    @GeneratedValue(generator = "uuid")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "category", length = 20, unique = true)
     private String categoryName;

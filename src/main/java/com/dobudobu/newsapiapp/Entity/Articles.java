@@ -1,5 +1,6 @@
 package com.dobudobu.newsapiapp.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
@@ -39,6 +40,7 @@ public class Articles {
     private String content;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "category", referencedColumnName = "id")
     private Category category;
 
@@ -49,6 +51,6 @@ public class Articles {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany
-    private List<Image> images;
+    @OneToOne
+    private Image images;
 }

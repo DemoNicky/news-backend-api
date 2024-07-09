@@ -22,7 +22,7 @@ public class CategoryController {
             path = "/create-category",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<ResponseHandling<CreateCategoryResponse>> createCategory(@RequestParam("category") @Min(2) @NotBlank String category){
+    public ResponseEntity<ResponseHandling<CreateCategoryResponse>> createCategory(@RequestParam("category") @NotBlank String category){
         ResponseHandling<CreateCategoryResponse> response = categoryService.createCategory(category);
         if (response.getErrors().equals(true)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
