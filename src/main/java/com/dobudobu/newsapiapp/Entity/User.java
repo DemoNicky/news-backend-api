@@ -36,8 +36,8 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "profile_image_url")
-    private String profileImageUrl;
+    @OneToOne
+    private Image image;
 
     private Role role;
 

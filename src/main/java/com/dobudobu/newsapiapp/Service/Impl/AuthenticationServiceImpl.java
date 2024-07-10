@@ -5,7 +5,9 @@ import com.dobudobu.newsapiapp.Dto.Response.JwtAuthenticationResponse;
 import com.dobudobu.newsapiapp.Dto.Request.SignInRequest;
 import com.dobudobu.newsapiapp.Dto.Request.SignUpRequest;
 import com.dobudobu.newsapiapp.Entity.Enum.Role;
+import com.dobudobu.newsapiapp.Entity.Image;
 import com.dobudobu.newsapiapp.Entity.User;
+import com.dobudobu.newsapiapp.Repository.ImageRepository;
 import com.dobudobu.newsapiapp.Repository.UserRepository;
 import com.dobudobu.newsapiapp.Service.AuthenticationService;
 import com.dobudobu.newsapiapp.Service.JWTService;
@@ -18,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +37,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     private UUIDGeneratorUtil uuidGeneratorUtil;
 
+    @Autowired
+    private ImageRepository imageRepository;
+
     public User signUp(SignUpRequest signUpRequest){
+        Optional<Image> image = imageRepository.findById("1");
 
         User user = new User();
         user.setUserCode(uuidGeneratorUtil.getUUIDCode());
@@ -43,6 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setEmail(signUpRequest.getEmail());
         user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        user.setImage(image.get());
         user.setActive(false);
 
         return userRepository.save(user);

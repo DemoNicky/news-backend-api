@@ -20,6 +20,9 @@ public class Comment {
     @GeneratedValue(generator = "uuid")
     private String id;
 
+    @Column(name = "comment_code", length = 10, unique = true)
+    private String commentCode;
+
     //comment content digunakan untuk menyimpan konten dari komen
     @Column(name = "comment_content", length = 1000)
     private String commentContent;
@@ -37,9 +40,6 @@ public class Comment {
 
     @ManyToOne
     private User user;
-
-    @ManyToOne
-    private Articles articles;
 
     @OneToMany
     private List<CommentReply> commentReplies;

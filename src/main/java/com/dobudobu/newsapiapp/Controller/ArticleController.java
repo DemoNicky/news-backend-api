@@ -1,15 +1,19 @@
 package com.dobudobu.newsapiapp.Controller;
 
 import com.dobudobu.newsapiapp.Dto.Response.CreateArticleResponse;
+import com.dobudobu.newsapiapp.Dto.Response.GetArticleResponse;
+import com.dobudobu.newsapiapp.Dto.Response.HitArticleDetailResponse;
 import com.dobudobu.newsapiapp.Dto.Response.ResponseHandling;
 import com.dobudobu.newsapiapp.Service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/article")
@@ -26,6 +30,30 @@ public class ArticleController {
                                                                                   @RequestParam("content")String content,
                                                                                   @RequestParam("categoryId")Long categoryId) throws IOException {
         ResponseHandling<CreateArticleResponse> responseHandling = articleService.createArticle(image, articlesTitle, content, categoryId);
+        if (responseHandling.getErrors().equals(true)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseHandling);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(responseHandling);
+    }
+
+    @GetMapping(
+            path = "/get-article",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    private ResponseEntity<ResponseHandling<List<GetArticleResponse>>> getArticle(@RequestParam(name = "page", required = true) Integer page){
+        ResponseHandling<List<GetArticleResponse>> responseHandling = articleService.getArticle(page);
+        if (responseHandling.getErrors().equals(true)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseHandling);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(responseHandling);
+    }
+
+    @GetMapping(
+            path = "/hit-article-detail/{code}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    private ResponseEntity<ResponseHandling<HitArticleDetailResponse>> hitArticleDetail(@PathVariable(name = "code", required = true) String articleCode){
+        ResponseHandling<HitArticleDetailResponse> responseHandling = articleService.hitArticleDetail(articleCode);
         if (responseHandling.getErrors().equals(true)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseHandling);
         }

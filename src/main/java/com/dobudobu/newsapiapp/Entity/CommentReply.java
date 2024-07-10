@@ -18,6 +18,9 @@ public class CommentReply {
     @GeneratedValue(generator = "uuid")
     private String id;
 
+    @Column(name = "reply_comment_code", length = 10, unique = true)
+    private String replyCommentCode;
+
     //comment content digunakan untuk menyimpan konten dari komen
     @Column(name = "comment_content", length = 1000)
     private String commentContent;
