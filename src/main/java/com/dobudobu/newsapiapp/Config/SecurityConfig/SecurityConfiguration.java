@@ -30,14 +30,18 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request.requestMatchers("/api/v1/auth/**")
+                .authorizeHttpRequests(request -> request.requestMatchers("/api/v1/auth/**", "/api/v1/article/get-article", "/api/v1/article/hit-article-detail/**")
                         .permitAll()
+
+                        //admin
                         .requestMatchers("/api/v1/admin").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/v1/category/create-category").hasAnyAuthority(Role.ADMIN.name())
-                        .requestMatchers("/api/v1/category/get-article").hasAnyAuthority(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/article/create-article").hasAnyAuthority(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/article/update-article/**").hasAnyAuthority(Role.ADMIN.name())
 
+                        //user
                         .requestMatchers("/api/v1/user").hasAnyAuthority(Role.USER.name())
-                        .requestMatchers("/api/v1/category/get-article").hasAnyAuthority(Role.USER.name())
+
 
                         .anyRequest().authenticated())
 

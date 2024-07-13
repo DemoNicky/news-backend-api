@@ -1,9 +1,6 @@
 package com.dobudobu.newsapiapp.Service;
 
-import com.dobudobu.newsapiapp.Dto.Response.CreateArticleResponse;
-import com.dobudobu.newsapiapp.Dto.Response.GetArticleResponse;
-import com.dobudobu.newsapiapp.Dto.Response.HitArticleDetailResponse;
-import com.dobudobu.newsapiapp.Dto.Response.ResponseHandling;
+import com.dobudobu.newsapiapp.Dto.Response.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -15,4 +12,6 @@ public interface ArticleService {
     ResponseHandling<List<GetArticleResponse>> getArticle(Integer page);
 
     ResponseHandling<HitArticleDetailResponse> hitArticleDetail(String articleCode);
+
+    ResponseHandling<UpdateArticleResponse> articleUpdate(MultipartFile image, String articlesTitle, String content, Long categoryId, String code) throws IOException;
 }

@@ -1,4 +1,4 @@
-package com.dobudobu.newsapiapp.Util;
+package com.dobudobu.newsapiapp.Util.GeneratorUtils;
 
 import org.springframework.stereotype.Component;
 

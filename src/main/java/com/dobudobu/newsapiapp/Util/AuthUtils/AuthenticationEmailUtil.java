@@ -1,4 +1,4 @@
-package com.dobudobu.newsapiapp.Util;
+package com.dobudobu.newsapiapp.Util.AuthUtils;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,6 @@
 package com.dobudobu.newsapiapp.Dto.Response;
 
 import com.dobudobu.newsapiapp.Entity.Category;
-import com.dobudobu.newsapiapp.Entity.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
@@ -13,7 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Builder
-public class CreateArticleResponse {
+public class UpdateArticleResponse {
 
     private String articlesCode;
 
@@ -21,6 +20,9 @@ public class CreateArticleResponse {
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date datePostedArticle;
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private Date dateUpdateArticle;
 
     private Integer readership;
 

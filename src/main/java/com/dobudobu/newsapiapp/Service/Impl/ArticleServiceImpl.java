@@ -12,8 +12,10 @@ import com.dobudobu.newsapiapp.Repository.CategoryRepository;
 import com.dobudobu.newsapiapp.Repository.ImageRepository;
 import com.dobudobu.newsapiapp.Repository.UserRepository;
 import com.dobudobu.newsapiapp.Service.ArticleService;
-import com.dobudobu.newsapiapp.Util.AuthenticationEmailUtil;
-import com.dobudobu.newsapiapp.Util.UUIDGeneratorUtil;
+import com.dobudobu.newsapiapp.Util.AuthUtils.AuthenticationEmailUtil;
+import com.dobudobu.newsapiapp.Util.GeneratorUtils.UUIDGeneratorUtil;
+import com.dobudobu.newsapiapp.Util.ImageUtils.DeleteImageUtil;
+import com.dobudobu.newsapiapp.Util.ImageUtils.UploadImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,12 +51,35 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private UUIDGeneratorUtil uuidGeneratorUtil;
 
+    @Autowired
+    private UploadImageUtil uploadImageUtil;
+
+    @Autowired
+    private DeleteImageUtil deleteImageUtil;
+
     private final Cloudinary cloudinary;
 
     @Override
     @Transactional
     public ResponseHandling<CreateArticleResponse> createArticle(MultipartFile image, String articlesTitle, String content, Long categoryId) throws IOException {
         ResponseHandling<CreateArticleResponse> responseHandling = new ResponseHandling<>();
+
+        // check is content alrady exists
+        Optional<Articles> existingArticle = articlesRepository.findByContent(content);
+        if (existingArticle.isPresent()) {
+            responseHandling.setErrors(true);
+            responseHandling.setMessage("Article content alrady exists");
+            return responseHandling;
+        }
+
+        // check is article title alrady exists
+        Optional<Articles> existingArticleTitle = articlesRepository.findByArticlesTitle(articlesTitle);
+        if (existingArticleTitle.isPresent()) {
+            responseHandling.setErrors(true);
+            responseHandling.setMessage("Article title alrady exists");
+            return responseHandling;
+        }
+
         Optional<User> user = userRepository.findByEmail(authenticationEmailUtil.getEmailAuthentication());
         Optional<Category> category = categoryRepository.findById(categoryId);
 
@@ -68,12 +93,19 @@ public class ArticleServiceImpl implements ArticleService {
             responseHandling.setMessage("user not found");
             return responseHandling;
         }
-        Map<?, ?> result = cloudinary.uploader().upload(image.getBytes(), ObjectUtils.emptyMap());
-        String imageUrl = result.get("url").toString();
+
+        UploadImageResult uploadImage;
+        try {
+            uploadImage = uploadImageUtil.uploadImage(image);
+        } catch (IOException e) {
+            responseHandling.setErrors(true);
+            responseHandling.setMessage("Failed to upload image: " + e.getMessage());
+            return responseHandling;
+        }
 
         Image imageSave = new Image();
-        imageSave.setUrlImage(imageUrl);
-
+        imageSave.setUrlImage(uploadImage.getImageUrl());
+        imageSave.setPublicId(uploadImage.getPublicId());
         imageRepository.save(imageSave);
 
         Articles articles = new Articles();
@@ -194,6 +226,77 @@ public class ArticleServiceImpl implements ArticleService {
 
         responseHandling.setData(hitArticleDetailResponse);
         responseHandling.setMessage("success hit article detail data");
+        responseHandling.setErrors(false);
+        return responseHandling;
+    }
+
+    @Override
+    @Transactional
+    public ResponseHandling<UpdateArticleResponse> articleUpdate(MultipartFile image, String articlesTitle, String content, Long categoryId, String code) throws IOException {
+        ResponseHandling<UpdateArticleResponse> responseHandling = new ResponseHandling<>();
+        Optional<User> user = userRepository.findByEmail(authenticationEmailUtil.getEmailAuthentication());
+        Optional<Category> category = categoryRepository.findById(categoryId);
+        Optional<Articles> articles = articlesRepository.findByArticlesCode(code);
+
+        if (!articles.isPresent()){
+            responseHandling.setErrors(true);
+            responseHandling.setMessage("articles not found");
+            return responseHandling;
+        }
+
+        if (!category.isPresent()){
+            responseHandling.setErrors(true);
+            responseHandling.setMessage("category not found");
+            return responseHandling;
+        }
+        if (!user.isPresent()){
+            responseHandling.setErrors(true);
+            responseHandling.setMessage("user not found");
+            return responseHandling;
+        }
+
+        //upload image
+        UploadImageResult uploadImage;
+        try {
+            uploadImage = uploadImageUtil.uploadImage(image);
+        } catch (IOException e) {
+            responseHandling.setErrors(true);
+            responseHandling.setMessage("Failed to upload image: " + e.getMessage());
+            return responseHandling;
+        }
+
+        //delete image
+        Map<?, ?> deleteResult = deleteImageUtil.deleteImage(articles.get().getImages().getPublicId());
+        if (deleteResult.containsKey("error")){
+            String error = deleteResult.get("error").toString();
+            responseHandling.setMessage(error);
+            responseHandling.setErrors(true);
+            return responseHandling;
+        }
+
+        Articles articlesget = articles.get();
+        articlesget.setArticlesTitle(articlesTitle);
+        articlesget.setContent(content);
+        articlesget.setCategory(category.get());
+        articlesget.setDateUpdateArticle(new Date());
+        articlesget.getImages().setUrlImage(uploadImage.getImageUrl());
+        articlesget.getImages().setPublicId(uploadImage.getPublicId());
+        articlesRepository.save(articlesget);
+
+        responseHandling.setData(UpdateArticleResponse.builder()
+                .articlesCode(articlesget.getArticlesCode())
+                .articlesTitle(articlesget.getArticlesTitle())
+                .datePostedArticle(articlesget.getDatePostedArticle())
+                .dateUpdateArticle(articlesget.getDateUpdateArticle())
+                .readership(articlesget.getReadership())
+                .readership(articlesget.getReadership())
+                .likes(articlesget.getLikes())
+                .author(articlesget.getAuthor())
+                .image(articlesget.getImages().getUrlImage())
+                .content(articlesget.getContent())
+                .category(articlesget.getCategory())
+                .build());
+        responseHandling.setMessage("success update article");
         responseHandling.setErrors(false);
         return responseHandling;
     }

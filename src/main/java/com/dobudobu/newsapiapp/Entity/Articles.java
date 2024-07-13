@@ -26,6 +26,9 @@ public class Articles {
     @Column(name = "date_posted_article")
     private Date datePostedArticle;
 
+    @Column(name = "date_update_article")
+    private Date dateUpdateArticle;
+
     //ini untuk jumlah viewers
     @Column(name = "readership")
     private Integer readership;

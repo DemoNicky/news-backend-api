@@ -11,7 +11,7 @@ import com.dobudobu.newsapiapp.Repository.ImageRepository;
 import com.dobudobu.newsapiapp.Repository.UserRepository;
 import com.dobudobu.newsapiapp.Service.AuthenticationService;
 import com.dobudobu.newsapiapp.Service.JWTService;
-import com.dobudobu.newsapiapp.Util.UUIDGeneratorUtil;
+import com.dobudobu.newsapiapp.Util.GeneratorUtils.UUIDGeneratorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -14,4 +14,8 @@ public interface ArticlesRepository extends JpaRepository<Articles, String> {
     Optional<Articles> findByArticlesCode(String uuid);
 
     Page<Articles> findAll(Pageable pageable);
+
+    Optional<Articles> findByContent(String content);
+
+    Optional<Articles> findByArticlesTitle(String articlesTitle);
 }

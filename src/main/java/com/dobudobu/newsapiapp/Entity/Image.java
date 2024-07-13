@@ -14,6 +14,9 @@ public class Image {
     @GeneratedValue(generator = "uuid")
     private String id;
 
+    @Column(name = "public_id", unique = true)
+    private String publicId;
+
     @Column(name = "url_image")
     private String urlImage;
 
