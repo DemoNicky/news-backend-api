@@ -38,6 +38,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/category/create-category").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/v1/article/create-article").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/v1/article/update-article/**").hasAnyAuthority(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/article/delete-article/**").hasAnyAuthority(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/article/activate-article/**").hasAnyAuthority(Role.ADMIN.name())
 
                         //user
                         .requestMatchers("/api/v1/user").hasAnyAuthority(Role.USER.name())

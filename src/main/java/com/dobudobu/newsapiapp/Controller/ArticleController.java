@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.util.List;
 
@@ -67,6 +68,30 @@ public class ArticleController {
                                                                                  @RequestParam("categoryId")Long categoryId,
                                                                                  @PathVariable(name = "article-code", required = true)String code) throws IOException {
         ResponseHandling<UpdateArticleResponse> responseHandling = articleService.articleUpdate(image, articlesTitle, content, categoryId, code);
+        if (responseHandling.getErrors().equals(true)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseHandling);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(responseHandling);
+    }
+
+    @DeleteMapping(
+            path = "/delete-article/{article-code}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ResponseHandling> deleteArticle(@PathVariable("article-code")String code){
+        ResponseHandling responseHandling = articleService.deleteArticle(code);
+        if (responseHandling.getErrors().equals(true)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseHandling);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(responseHandling);
+    }
+
+    @PostMapping(
+            path = "/activate-article/{article-code}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ResponseHandling> activateArticle(@PathVariable("article-code")String code){
+        ResponseHandling responseHandling = articleService.activatedArticle(code);
         if (responseHandling.getErrors().equals(true)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseHandling);
         }

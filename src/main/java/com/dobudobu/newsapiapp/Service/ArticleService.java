@@ -14,4 +14,8 @@ public interface ArticleService {
     ResponseHandling<HitArticleDetailResponse> hitArticleDetail(String articleCode);
 
     ResponseHandling<UpdateArticleResponse> articleUpdate(MultipartFile image, String articlesTitle, String content, Long categoryId, String code) throws IOException;
+
+    ResponseHandling deleteArticle(String code);
+
+    ResponseHandling activatedArticle(String code);
 }

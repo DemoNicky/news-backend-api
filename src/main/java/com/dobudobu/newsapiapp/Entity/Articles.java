@@ -42,6 +42,9 @@ public class Articles {
     @Column(name = "content", length = 40000, unique = true)
     private String content;
 
+    @Column(name = "active")
+    private Boolean Active;
+
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "category", referencedColumnName = "id")

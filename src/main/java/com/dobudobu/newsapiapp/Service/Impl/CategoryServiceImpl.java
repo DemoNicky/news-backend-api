@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
             return responseHandling;
         }
         Pageable pageable = PageRequest.of(page, 10);
-        Page<Articles> articles = articlesRepository.findArticlesByCategory(category, pageable);
+        Page<Articles> articles = articlesRepository.findArticlesByCategory(categoryId, pageable);
 
         List<GetArticleResponse> result = articles.stream().map((p)->{
             GetArticleResponse getArticleResponse = new GetArticleResponse();

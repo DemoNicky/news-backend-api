@@ -119,6 +119,7 @@ public class ArticleServiceImpl implements ArticleService {
         articles.setCategory(category.get());
         articles.setUser(user.get());
         articles.setImages(imageSave);
+        articles.setActive(true);
 
         articlesRepository.save(articles);
 
@@ -179,6 +180,11 @@ public class ArticleServiceImpl implements ArticleService {
         Optional<Articles> articles = articlesRepository.findByArticlesCode(articleCode);
         if (!articles.isPresent()){
             responseHandling.setMessage("articles not found");
+            responseHandling.setErrors(true);
+            return responseHandling;
+        }
+        if (articles.get().getActive() == false || articles.get().equals(null) || articles.get().getActive() == null){
+            responseHandling.setMessage("articles not active");
             responseHandling.setErrors(true);
             return responseHandling;
         }
@@ -297,6 +303,52 @@ public class ArticleServiceImpl implements ArticleService {
                 .category(articlesget.getCategory())
                 .build());
         responseHandling.setMessage("success update article");
+        responseHandling.setErrors(false);
+        return responseHandling;
+    }
+
+    @Override
+    public ResponseHandling deleteArticle(String code) {
+        ResponseHandling responseHandling = new ResponseHandling();
+        Optional<Articles> articles = articlesRepository.findByArticlesCode(code);
+        if (!articles.isPresent()) {
+            responseHandling.setMessage("article not found");
+            responseHandling.setErrors(true);
+            return responseHandling;
+        }
+        if (articles.get().getActive() == false || articles.get().getActive().equals(false)){
+            responseHandling.setMessage("already deleted");
+            responseHandling.setErrors(true);
+            return responseHandling;
+        }
+        Articles articlesget = articles.get();
+        articlesget.setActive(false);
+        articlesRepository.save(articlesget);
+
+        responseHandling.setMessage("successfully deleted articles");
+        responseHandling.setErrors(false);
+        return responseHandling;
+    }
+
+    @Override
+    public ResponseHandling activatedArticle(String code) {
+        ResponseHandling responseHandling = new ResponseHandling();
+        Optional<Articles> articles = articlesRepository.findByArticlesCode(code);
+        if (!articles.isPresent()) {
+            responseHandling.setMessage("article not found");
+            responseHandling.setErrors(true);
+            return responseHandling;
+        }
+        if (articles.get().getActive() == true || articles.get().getActive().equals(true)){
+            responseHandling.setMessage("article already activated");
+            responseHandling.setErrors(true);
+            return responseHandling;
+        }
+        Articles articlesget = articles.get();
+        articlesget.setActive(true);
+        articlesRepository.save(articlesget);
+
+        responseHandling.setMessage("successfully activated articles");
         responseHandling.setErrors(false);
         return responseHandling;
     }
