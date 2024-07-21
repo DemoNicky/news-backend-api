@@ -50,7 +50,7 @@ public class Articles {
     @JoinColumn(name = "category", referencedColumnName = "id")
     private Category category;
 
-    @OneToMany
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
     @ManyToOne

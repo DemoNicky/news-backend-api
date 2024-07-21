@@ -1,5 +1,6 @@
 package com.dobudobu.newsapiapp.Controller;
 
+import com.dobudobu.newsapiapp.Dto.Request.CommentRequest;
 import com.dobudobu.newsapiapp.Dto.Response.*;
 import com.dobudobu.newsapiapp.Service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.util.List;
 
@@ -28,6 +27,18 @@ public class ArticleController {
                                                                                   @RequestParam("content")String content,
                                                                                   @RequestParam("categoryId")Long categoryId) throws IOException {
         ResponseHandling<CreateArticleResponse> responseHandling = articleService.createArticle(image, articlesTitle, content, categoryId);
+        if (responseHandling.getErrors().equals(true)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseHandling);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(responseHandling);
+    }
+
+    @PostMapping(
+            path = "/activate-article/{article-code}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ResponseHandling> activateArticle(@PathVariable("article-code")String code){
+        ResponseHandling responseHandling = articleService.activatedArticle(code);
         if (responseHandling.getErrors().equals(true)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseHandling);
         }
@@ -86,12 +97,13 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.OK).body(responseHandling);
     }
 
-    @PostMapping(
-            path = "/activate-article/{article-code}",
+    @GetMapping(
+            path = "/search-article",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<ResponseHandling> activateArticle(@PathVariable("article-code")String code){
-        ResponseHandling responseHandling = articleService.activatedArticle(code);
+    public ResponseEntity<ResponseHandling<List<SearchArticleResponse>>> searchArticle(@RequestParam("keyword")String keyword,
+                                                                                       @RequestParam("page")Integer page){
+        ResponseHandling<List<SearchArticleResponse>> responseHandling = articleService.searchArticle(keyword, page);
         if (responseHandling.getErrors().equals(true)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseHandling);
         }

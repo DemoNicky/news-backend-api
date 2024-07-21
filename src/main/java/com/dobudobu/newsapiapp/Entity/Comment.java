@@ -39,6 +39,10 @@ public class Comment {
     private Integer commentDissLike;
 
     @ManyToOne
+    @JoinColumn(name = "article_id", nullable = false)
+    private Articles article;
+
+    @ManyToOne
     private User user;
 
     @OneToMany

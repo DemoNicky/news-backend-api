@@ -1,6 +1,5 @@
 package com.dobudobu.newsapiapp.Dto.Response;
 
-import com.dobudobu.newsapiapp.Entity.Comment;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +8,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class GetArticleResponse {
+public class SearchArticleResponse {
 
     private String articleCode;
 

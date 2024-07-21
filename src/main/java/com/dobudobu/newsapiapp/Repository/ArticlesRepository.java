@@ -24,4 +24,7 @@ public interface ArticlesRepository extends JpaRepository<Articles, String> {
 
     @Query("SELECT p FROM Articles p WHERE p.category.id = :category")
     Page<Articles> findArticlesByCategory(@Param("category") Long category, Pageable pageable);
+
+    @Query("SELECT a FROM Articles a WHERE a.articlesTitle LIKE %:keyword% OR a.content LIKE %:keyword%")
+    Page<Articles> searchArticleByKeyword(@Param("keyword") String keyword, Pageable pageable);
 }

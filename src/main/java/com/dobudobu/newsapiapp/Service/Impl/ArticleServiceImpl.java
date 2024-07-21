@@ -230,6 +230,8 @@ public class ArticleServiceImpl implements ArticleService {
             return commentGetArticleResponse;
         }).collect(Collectors.toList());
 
+        hitArticleDetailResponse.setCommentGetArticleResponses(commentGetArticleResponses);
+
         responseHandling.setData(hitArticleDetailResponse);
         responseHandling.setMessage("success hit article detail data");
         responseHandling.setErrors(false);
@@ -349,6 +351,33 @@ public class ArticleServiceImpl implements ArticleService {
         articlesRepository.save(articlesget);
 
         responseHandling.setMessage("successfully activated articles");
+        responseHandling.setErrors(false);
+        return responseHandling;
+    }
+
+    @Override
+    public ResponseHandling<List<SearchArticleResponse>> searchArticle(String keyword, Integer page) {
+        ResponseHandling<List<SearchArticleResponse>> responseHandling = new ResponseHandling<>();
+
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Articles> articles = articlesRepository.searchArticleByKeyword(keyword, pageable);
+
+        List<SearchArticleResponse> responses = articles.stream().map((x)-> {
+            SearchArticleResponse searchArticleResponse = new SearchArticleResponse();
+            searchArticleResponse.setArticleCode(x.getArticlesCode());
+            searchArticleResponse.setArticlesTitle(x.getArticlesTitle());
+            searchArticleResponse.setCategory(x.getCategory().getCategoryName());
+            searchArticleResponse.setDatePostedArticle(x.getDatePostedArticle());
+            searchArticleResponse.setReadership(x.getReadership());
+            searchArticleResponse.setLikes(x.getLikes());
+            searchArticleResponse.setAuthor(x.getAuthor());
+            searchArticleResponse.setImage(x.getImages().getUrlImage());
+
+            return searchArticleResponse;
+        }).collect(Collectors.toList());
+
+        responseHandling.setData(responses);
+        responseHandling.setMessage("success search article");
         responseHandling.setErrors(false);
         return responseHandling;
     }

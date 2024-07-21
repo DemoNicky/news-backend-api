@@ -18,4 +18,6 @@ public interface ArticleService {
     ResponseHandling deleteArticle(String code);
 
     ResponseHandling activatedArticle(String code);
+
+    ResponseHandling<List<SearchArticleResponse>> searchArticle(String keyword, Integer page);
 }
