@@ -47,8 +47,7 @@ public class SecurityConfiguration {
                         //user
                         .requestMatchers("/api/v1/user").hasAnyAuthority(Role.USER.name())
                         .requestMatchers("/api/v1/comment/comment-article/**").hasAnyAuthority(Role.USER.name())
-
-
+                        .requestMatchers("/api/v1/comment/reply-comment-article/**").hasAnyAuthority(Role.USER.name())
 
                         .anyRequest().authenticated())
 

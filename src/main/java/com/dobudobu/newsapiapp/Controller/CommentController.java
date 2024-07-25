@@ -1,5 +1,6 @@
 package com.dobudobu.newsapiapp.Controller;
 
+import com.dobudobu.newsapiapp.Dto.Request.CommentReplyRequest;
 import com.dobudobu.newsapiapp.Dto.Request.CommentRequest;
 import com.dobudobu.newsapiapp.Dto.Response.ResponseHandling;
 import com.dobudobu.newsapiapp.Service.CommentService;
@@ -24,6 +25,21 @@ public class CommentController {
     public ResponseEntity<ResponseHandling> commentArticle(@PathVariable("news-code")String code,
                                                            @RequestBody CommentRequest commentRequest){
         ResponseHandling responseHandling = commentService.commentArticle(code, commentRequest);
+        if (responseHandling.getErrors().equals(true)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseHandling);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(responseHandling);
+    }
+
+    @PostMapping(
+            path = "/reply-comment-article/{news-code}/{comment-code}",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ResponseHandling> commentReplyArticle(@PathVariable("news-code")String code,
+                                                           @PathVariable("comment-code")String commentCode,
+                                                           @RequestBody CommentReplyRequest commentReplyRequest){
+        ResponseHandling responseHandling = commentService.commentReplyArticle(code, commentCode, commentReplyRequest);
         if (responseHandling.getErrors().equals(true)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseHandling);
         }

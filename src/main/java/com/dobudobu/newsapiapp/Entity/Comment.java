@@ -45,7 +45,7 @@ public class Comment {
     @ManyToOne
     private User user;
 
-    @OneToMany
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
     private List<CommentReply> commentReplies;
 
 }
