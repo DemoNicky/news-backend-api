@@ -1,12 +1,15 @@
 package com.dobudobu.newsapiapp.Service.Impl;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.dobudobu.newsapiapp.Dto.Response.*;
 import com.dobudobu.newsapiapp.Entity.Articles;
 import com.dobudobu.newsapiapp.Entity.Category;
 import com.dobudobu.newsapiapp.Entity.Image;
 import com.dobudobu.newsapiapp.Entity.User;
+import com.dobudobu.newsapiapp.Exception.ServiceExceptionHandler.CustomDataAlreadyExistsException;
+import com.dobudobu.newsapiapp.Exception.ServiceExceptionHandler.CustomFailUploadImageException;
+import com.dobudobu.newsapiapp.Exception.ServiceExceptionHandler.CustomInternalServerErrorException;
+import com.dobudobu.newsapiapp.Exception.ServiceExceptionHandler.CustomNotFoundException;
 import com.dobudobu.newsapiapp.Repository.ArticlesRepository;
 import com.dobudobu.newsapiapp.Repository.CategoryRepository;
 import com.dobudobu.newsapiapp.Repository.ImageRepository;
@@ -21,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -67,40 +71,30 @@ public class ArticleServiceImpl implements ArticleService {
         // check is content alrady exists
         Optional<Articles> existingArticle = articlesRepository.findByContent(content);
         if (existingArticle.isPresent()) {
-            responseHandling.setErrors(true);
-            responseHandling.setMessage("Article content alrady exists");
-            return responseHandling;
+            throw new CustomDataAlreadyExistsException("content alrady exists");
         }
 
         // check is article title alrady exists
         Optional<Articles> existingArticleTitle = articlesRepository.findByArticlesTitle(articlesTitle);
         if (existingArticleTitle.isPresent()) {
-            responseHandling.setErrors(true);
-            responseHandling.setMessage("Article title alrady exists");
-            return responseHandling;
+            throw new CustomDataAlreadyExistsException("Article title alrady exists");
         }
 
         Optional<User> user = userRepository.findByEmail(authenticationEmailUtil.getEmailAuthentication());
         Optional<Category> category = categoryRepository.findById(categoryId);
 
         if (!category.isPresent()){
-            responseHandling.setErrors(true);
-            responseHandling.setMessage("category not found");
-            return responseHandling;
+            throw new CustomNotFoundException("category not found");
         }
         if (!user.isPresent()){
-            responseHandling.setErrors(true);
-            responseHandling.setMessage("user not found");
-            return responseHandling;
+            throw new CustomNotFoundException("user not found");
         }
 
         UploadImageResult uploadImage;
         try {
             uploadImage = uploadImageUtil.uploadImage(image);
         } catch (IOException e) {
-            responseHandling.setErrors(true);
-            responseHandling.setMessage("Failed to upload image: " + e.getMessage());
-            return responseHandling;
+            throw new CustomFailUploadImageException("Failed to upload image: " + e.getMessage());
         }
 
         Image imageSave = new Image();
@@ -137,6 +131,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .build();
 
         responseHandling.setData(createArticleResponse);
+        responseHandling.setHttpStatus(HttpStatus.OK);
         responseHandling.setMessage("success upload article");
         responseHandling.setErrors(false);
         return responseHandling;
@@ -149,9 +144,7 @@ public class ArticleServiceImpl implements ArticleService {
         Pageable pageable = PageRequest.of(page, 10);
         Page<Articles> articles = articlesRepository.findAll(pageable);
         if (articles.isEmpty()){
-            responseHandling.setMessage("article is empty/article not found");
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new CustomNotFoundException("article is empty/article not found");
         }
         List<GetArticleResponse> getArticleResponses = articles.stream().map((p)->{
             GetArticleResponse getArticleResponse = new GetArticleResponse();
@@ -168,6 +161,7 @@ public class ArticleServiceImpl implements ArticleService {
         }).collect(Collectors.toList());
 
         responseHandling.setData(getArticleResponses);
+        responseHandling.setHttpStatus(HttpStatus.OK);
         responseHandling.setMessage("success get article data");
         responseHandling.setErrors(false);
         return responseHandling;
@@ -179,14 +173,11 @@ public class ArticleServiceImpl implements ArticleService {
         ResponseHandling<HitArticleDetailResponse> responseHandling = new ResponseHandling<>();
         Optional<Articles> articles = articlesRepository.findByArticlesCode(articleCode);
         if (!articles.isPresent()){
-            responseHandling.setMessage("articles not found");
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new CustomNotFoundException("article not found");
         }
+
         if (articles.get().getActive() == false || articles.get().equals(null) || articles.get().getActive() == null){
-            responseHandling.setMessage("articles not active");
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new CustomNotFoundException("article not found");
         }
         Articles articlesData = articles.get();
         articlesData.setReadership(articlesData.getReadership() + 1);
@@ -233,6 +224,7 @@ public class ArticleServiceImpl implements ArticleService {
         hitArticleDetailResponse.setCommentGetArticleResponses(commentGetArticleResponses);
 
         responseHandling.setData(hitArticleDetailResponse);
+        responseHandling.setHttpStatus(HttpStatus.OK);
         responseHandling.setMessage("success hit article detail data");
         responseHandling.setErrors(false);
         return responseHandling;
@@ -247,20 +239,14 @@ public class ArticleServiceImpl implements ArticleService {
         Optional<Articles> articles = articlesRepository.findByArticlesCode(code);
 
         if (!articles.isPresent()){
-            responseHandling.setErrors(true);
-            responseHandling.setMessage("articles not found");
-            return responseHandling;
+            throw new CustomNotFoundException("article not found");
         }
 
         if (!category.isPresent()){
-            responseHandling.setErrors(true);
-            responseHandling.setMessage("category not found");
-            return responseHandling;
+            throw new CustomNotFoundException("category not found");
         }
         if (!user.isPresent()){
-            responseHandling.setErrors(true);
-            responseHandling.setMessage("user not found");
-            return responseHandling;
+            throw new CustomNotFoundException("user not found");
         }
 
         //upload image
@@ -268,18 +254,13 @@ public class ArticleServiceImpl implements ArticleService {
         try {
             uploadImage = uploadImageUtil.uploadImage(image);
         } catch (IOException e) {
-            responseHandling.setErrors(true);
-            responseHandling.setMessage("Failed to upload image: " + e.getMessage());
-            return responseHandling;
+            throw new CustomFailUploadImageException("Failed to upload image: " + e.getMessage());
         }
 
         //delete image
         Map<?, ?> deleteResult = deleteImageUtil.deleteImage(articles.get().getImages().getPublicId());
         if (deleteResult.containsKey("error")){
-            String error = deleteResult.get("error").toString();
-            responseHandling.setMessage(error);
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new CustomInternalServerErrorException("kesalahan saat menghapus gambar");
         }
 
         Articles articlesget = articles.get();
@@ -304,6 +285,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .content(articlesget.getContent())
                 .category(articlesget.getCategory())
                 .build());
+        responseHandling.setHttpStatus(HttpStatus.OK);
         responseHandling.setMessage("success update article");
         responseHandling.setErrors(false);
         return responseHandling;
@@ -314,19 +296,16 @@ public class ArticleServiceImpl implements ArticleService {
         ResponseHandling responseHandling = new ResponseHandling();
         Optional<Articles> articles = articlesRepository.findByArticlesCode(code);
         if (!articles.isPresent()) {
-            responseHandling.setMessage("article not found");
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new CustomNotFoundException("artile not found");
         }
         if (articles.get().getActive() == false || articles.get().getActive().equals(false)){
-            responseHandling.setMessage("already deleted");
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new CustomNotFoundException("artile not found");
         }
         Articles articlesget = articles.get();
         articlesget.setActive(false);
         articlesRepository.save(articlesget);
 
+        responseHandling.setHttpStatus(HttpStatus.OK);
         responseHandling.setMessage("successfully deleted articles");
         responseHandling.setErrors(false);
         return responseHandling;
@@ -337,19 +316,16 @@ public class ArticleServiceImpl implements ArticleService {
         ResponseHandling responseHandling = new ResponseHandling();
         Optional<Articles> articles = articlesRepository.findByArticlesCode(code);
         if (!articles.isPresent()) {
-            responseHandling.setMessage("article not found");
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new CustomNotFoundException("artile not found");
         }
         if (articles.get().getActive() == true || articles.get().getActive().equals(true)){
-            responseHandling.setMessage("article already activated");
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new CustomDataAlreadyExistsException("article already activated");
         }
         Articles articlesget = articles.get();
         articlesget.setActive(true);
         articlesRepository.save(articlesget);
 
+        responseHandling.setHttpStatus(HttpStatus.OK);
         responseHandling.setMessage("successfully activated articles");
         responseHandling.setErrors(false);
         return responseHandling;
@@ -377,6 +353,7 @@ public class ArticleServiceImpl implements ArticleService {
         }).collect(Collectors.toList());
 
         responseHandling.setData(responses);
+        responseHandling.setHttpStatus(HttpStatus.OK);
         responseHandling.setMessage("success search article");
         responseHandling.setErrors(false);
         return responseHandling;

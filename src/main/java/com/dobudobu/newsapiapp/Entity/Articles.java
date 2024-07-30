@@ -17,10 +17,10 @@ public class Articles {
     @GeneratedValue(generator = "uuid")
     private String id;
 
-    @Column(name = "articles_code", length = 10, unique = true)
+    @Column(name = "articles_code", length = 10, unique = true, nullable = false)
     private String articlesCode;
 
-    @Column(name = "articles_title", length = 40, unique = true)
+    @Column(name = "articles_title", length = 40, unique = true, nullable = false)
     private String articlesTitle;
 
     @Column(name = "date_posted_article")
@@ -39,7 +39,7 @@ public class Articles {
     @Column(name = "author")
     private String author;
 
-    @Column(name = "content", length = 40000, unique = true)
+    @Column(name = "content", length = 40000, unique = true, nullable = false)
     private String content;
 
     @Column(name = "active")
@@ -59,4 +59,8 @@ public class Articles {
 
     @OneToOne
     private Image images;
+
+    @OneToMany(mappedBy = "articles")
+    private List<CommentReport> commentReports;
+
 }
