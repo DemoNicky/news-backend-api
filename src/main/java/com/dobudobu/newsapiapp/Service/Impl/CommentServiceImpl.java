@@ -7,6 +7,8 @@ import com.dobudobu.newsapiapp.Entity.Articles;
 import com.dobudobu.newsapiapp.Entity.Comment;
 import com.dobudobu.newsapiapp.Entity.CommentReply;
 import com.dobudobu.newsapiapp.Entity.User;
+import com.dobudobu.newsapiapp.Exception.ServiceCustomException.ApiRequestException;
+import com.dobudobu.newsapiapp.Exception.ServiceCustomException.CustomNotFoundException;
 import com.dobudobu.newsapiapp.Repository.ArticlesRepository;
 import com.dobudobu.newsapiapp.Repository.CommentReplyRepository;
 import com.dobudobu.newsapiapp.Repository.CommentRepository;
@@ -51,15 +53,11 @@ public class CommentServiceImpl implements CommentService {
 
         Optional<Articles> articles = articlesRepository.findByArticlesCode(code);
         if (!articles.isPresent()){
-            responseHandling.setMessage("article not found");
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new CustomNotFoundException("article not found");
         }
         Optional<User> user = userRepository.findByEmail(authenticationEmailUtil.getEmailAuthentication());
         if (!user.isPresent()) {
-            responseHandling.setMessage("User not found");
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new CustomNotFoundException("user not found");
         }
 
         Comment comment = new Comment();
@@ -90,16 +88,12 @@ public class CommentServiceImpl implements CommentService {
         ResponseHandling responseHandling = new ResponseHandling();
         Optional<Articles> articles = articlesRepository.findByArticlesCode(code);
         if (!articles.isPresent()){
-            responseHandling.setMessage("article not found");
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new CustomNotFoundException("article not found");
         }
 
         Optional<Comment> comment = commentRepository.findByCommentCodeAndByArticle(commentCode, articles.get());
         if (!comment.isPresent()){
-            responseHandling.setMessage("fail to push comment");
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new ApiRequestException("fail to push comment");
         }
         Optional<User> user = userRepository.findByEmail(authenticationEmailUtil.getEmailAuthentication());
         CommentReply commentReply = new CommentReply();

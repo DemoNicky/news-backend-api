@@ -61,6 +61,6 @@ public class Articles {
     private Image images;
 
     @OneToMany(mappedBy = "articles")
-    private List<CommentReport> commentReports;
+    private List<ArticleReport> articleReports;
 
 }

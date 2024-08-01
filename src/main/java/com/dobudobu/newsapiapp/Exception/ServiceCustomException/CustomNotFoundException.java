@@ -1,4 +1,4 @@
-package com.dobudobu.newsapiapp.Exception.ServiceExceptionHandler;
+package com.dobudobu.newsapiapp.Exception.ServiceCustomException;
 
 public class CustomNotFoundException extends RuntimeException {
 
