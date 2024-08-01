@@ -1,7 +1,7 @@
-package com.dobudobu.newsapiapp.Exception;
+package com.dobudobu.newsapiapp.Exception.ExceptionHandler;
 
 import com.dobudobu.newsapiapp.Exception.ExceptionResponse.ApiException;
-import com.dobudobu.newsapiapp.Exception.ServiceExceptionHandler.*;
+import com.dobudobu.newsapiapp.Exception.ServiceCustomException.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

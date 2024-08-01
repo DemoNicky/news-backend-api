@@ -5,4 +5,7 @@ import com.dobudobu.newsapiapp.Dto.Response.ResponseHandling;
 
 public interface ReportService {
     ResponseHandling createReportType(ReportTypeRequest reportTypeRequest);
+
+
+    ResponseHandling reportArticle(String articlesCode, Long reportId);
 }

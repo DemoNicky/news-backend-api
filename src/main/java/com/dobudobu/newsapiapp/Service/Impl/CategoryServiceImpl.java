@@ -5,6 +5,8 @@ import com.dobudobu.newsapiapp.Dto.Response.GetArticleResponse;
 import com.dobudobu.newsapiapp.Dto.Response.ResponseHandling;
 import com.dobudobu.newsapiapp.Entity.Articles;
 import com.dobudobu.newsapiapp.Entity.Category;
+import com.dobudobu.newsapiapp.Exception.ServiceCustomException.CustomDataAlreadyExistsException;
+import com.dobudobu.newsapiapp.Exception.ServiceCustomException.CustomNotFoundException;
 import com.dobudobu.newsapiapp.Repository.ArticlesRepository;
 import com.dobudobu.newsapiapp.Repository.CategoryRepository;
 import com.dobudobu.newsapiapp.Service.CategoryService;
@@ -13,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,9 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
         ResponseHandling<CreateCategoryResponse> responseHandling = new ResponseHandling<>();
         Optional<Category> categoryCheck = categoryRepository.findByCategoryName(category);
         if (categoryCheck.isPresent()){
-            responseHandling.setErrors(true);
-            responseHandling.setMessage("duplicate category");
-            return responseHandling;
+            throw new CustomDataAlreadyExistsException("category already exists");
         }
         Category categoryInsert = new Category();
         categoryInsert.setCategoryName(category);
@@ -57,9 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
         ResponseHandling<List<GetArticleResponse>> responseHandling = new ResponseHandling<>();
         Optional<Category> category = categoryRepository.findById(categoryId);
         if (!category.isPresent()){
-            responseHandling.setMessage("category not found");
-            responseHandling.setErrors(true);
-            return responseHandling;
+            throw new CustomNotFoundException("category not found");
         }
         Pageable pageable = PageRequest.of(page, 10);
         Page<Articles> articles = articlesRepository.findArticlesByCategory(categoryId, pageable);

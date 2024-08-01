@@ -17,7 +17,11 @@ public class ReportType {
     private String reportName;
 
     @ManyToOne
-    @JoinColumn(name = "id_comment_report", nullable = false)
+    @JoinColumn(name = "id_comment_report")
     private CommentReport commentReport;
+
+    @ManyToOne
+    @JoinColumn(name = "id_article_report")
+    private ArticleReport articleReport;
 
 }
