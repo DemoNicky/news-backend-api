@@ -19,7 +19,12 @@ public class CommentReport {
     @Column(name = "note", length = 400)
     private String note;
 
-    @OneToMany(mappedBy = "commentReport", cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(
+            name = "tb_comment_report_report_type",
+            joinColumns = @JoinColumn(name = "comment_report_id"),
+            inverseJoinColumns = @JoinColumn(name = "report_type_id")
+    )
     private List<ReportType> reportTypes;
 
     @ManyToOne

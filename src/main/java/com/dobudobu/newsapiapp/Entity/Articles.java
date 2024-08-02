@@ -60,7 +60,8 @@ public class Articles {
     @OneToOne
     private Image images;
 
-    @OneToMany(mappedBy = "articles")
+    @ManyToMany
+
     private List<ArticleReport> articleReports;
 
 }

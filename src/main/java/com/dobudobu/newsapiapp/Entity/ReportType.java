@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "tb_report_type")
@@ -16,12 +18,10 @@ public class ReportType {
     @Column(name = "report_name", length = 40, unique = true, nullable = false)
     private String reportName;
 
-    @ManyToOne
-    @JoinColumn(name = "id_comment_report")
-    private CommentReport commentReport;
+    @ManyToMany(mappedBy = "reportTypes")
+    private List<CommentReport> commentReport;
 
-    @ManyToOne
-    @JoinColumn(name = "id_article_report")
-    private ArticleReport articleReport;
+    @ManyToMany(mappedBy = "reportTypes")
+    private List<ArticleReport> articleReports;
 
 }

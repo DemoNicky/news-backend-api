@@ -13,13 +13,18 @@ public class ArticleReport {
 
     @Id
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @GeneratedValue(generator = "uuiud")
+    @GeneratedValue(generator = "uuid")
     private String id;
 
     @Column(name = "note", length = 400)
     private String note;
 
-    @OneToMany(mappedBy = "articleReport", cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(
+            name = "tb_article_report_report_Type",
+            joinColumns = @JoinColumn(name = "article_report_id"),
+            inverseJoinColumns = @JoinColumn(name = "report_type_id")
+    )
     private List<ReportType> reportTypes;
 
     @ManyToOne
