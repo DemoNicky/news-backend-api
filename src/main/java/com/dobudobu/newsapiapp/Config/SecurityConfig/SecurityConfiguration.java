@@ -44,6 +44,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/article/delete-article/**").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/v1/article/activate-article/**").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/v1/report/create-report-type").hasAnyAuthority(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/report/get-report-article/**").hasAnyAuthority(Role.ADMIN.name())
 
                         //user
                         .requestMatchers("/api/v1/user").hasAnyAuthority(Role.USER.name())

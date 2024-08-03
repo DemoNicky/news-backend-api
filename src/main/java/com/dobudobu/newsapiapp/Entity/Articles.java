@@ -60,8 +60,7 @@ public class Articles {
     @OneToOne
     private Image images;
 
-    @ManyToMany
-
+    @OneToMany(mappedBy = "articles", cascade = CascadeType.ALL)
     private List<ArticleReport> articleReports;
 
 }

@@ -2,6 +2,7 @@ package com.dobudobu.newsapiapp.Service;
 
 import com.dobudobu.newsapiapp.Dto.Request.ReportArticleRequest;
 import com.dobudobu.newsapiapp.Dto.Request.ReportTypeRequest;
+import com.dobudobu.newsapiapp.Dto.Response.ReportArticleGetResponse;
 import com.dobudobu.newsapiapp.Dto.Response.ReportTypeGetResponse;
 import com.dobudobu.newsapiapp.Dto.Response.ResponseHandling;
 
@@ -14,4 +15,6 @@ public interface ReportService {
     ResponseHandling reportArticle(String articlesCode, ReportArticleRequest reportArticleRequest);
 
     ResponseHandling<List<ReportTypeGetResponse>> getReportType();
+
+    ResponseHandling<List<ReportArticleGetResponse>> getResponseArticle(int page);
 }
